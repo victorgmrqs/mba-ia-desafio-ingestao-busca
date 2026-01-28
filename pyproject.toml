@@ -1,0 +1,21 @@
+[project]
+name = "mba-ia-desafio-ingestao-busca"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dotenv>=0.9.9",
+    "langchain>=1.2.6",
+    "langchain-community>=0.4.1",
+    "langchain-google-genai>=4.1.2",
+    "langchain-openai>=1.1.6",
+    "langchain-postgres>=0.0.16",
+    "langchain-text-splitters>=1.1.0",
+    "psycopg2-binary>=2.9.11",
+    "psycopg[binary]>=3.3.2",
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.12.0",
+    "pypdf>=6.5.0",
+    "rich>=14.2.0",
+]

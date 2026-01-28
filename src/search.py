@@ -1,29 +1,39 @@
-PROMPT_TEMPLATE = """
-CONTEXTO:
-{contexto}
+"""Função de busca semântica no banco vetorial."""
 
-REGRAS:
-- Responda somente com base no CONTEXTO.
-- Se a informação não estiver explicitamente no CONTEXTO, responda:
-  "Não tenho informações necessárias para responder sua pergunta."
-- Nunca invente ou use conhecimento externo.
-- Nunca produza opiniões ou interpretações além do que está escrito.
+import sys
+from pathlib import Path
 
-EXEMPLOS DE PERGUNTAS FORA DO CONTEXTO:
-Pergunta: "Qual é a capital da França?"
-Resposta: "Não tenho informações necessárias para responder sua pergunta."
+# Adicionar diretório raiz ao path para imports
+root_dir = Path(__file__).parent.parent
+sys.path.insert(0, str(root_dir))
 
-Pergunta: "Quantos clientes temos em 2024?"
-Resposta: "Não tenho informações necessárias para responder sua pergunta."
+from src.config import get_settings
+from src.services.vector_store import search_documents
 
-Pergunta: "Você acha isso bom ou ruim?"
-Resposta: "Não tenho informações necessárias para responder sua pergunta."
 
-PERGUNTA DO USUÁRIO:
-{pergunta}
-
-RESPONDA A "PERGUNTA DO USUÁRIO"
-"""
-
-def search_prompt(question=None):
-    pass
+def search_documents_for_question(question: str) -> str:
+    """
+    Busca documentos no banco vetorial e retorna contexto formatado.
+    
+    Args:
+        question: Pergunta do usuário
+        
+    Returns:
+        String formatada com o contexto dos documentos encontrados
+    """
+    if not question or not question.strip():
+        return ""
+    
+    settings = get_settings()
+    results = search_documents(question, settings, k=settings.search.k)
+    
+    if not results:
+        return ""
+    
+    context_parts = []
+    for document, score in results:
+        context_parts.append(
+            f'Documento (score: {score:.2f}):\n{document.page_content.strip()}\n'
+        )
+    
+    return '\n---\n'.join(context_parts)
